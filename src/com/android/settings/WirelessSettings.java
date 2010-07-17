@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.net.wimax.WimaxManager;
 import android.os.Bundle;
 import android.os.ServiceManager;
 import android.os.SystemProperties;
@@ -35,17 +36,20 @@ import com.android.internal.telephony.TelephonyIntents;
 import com.android.internal.telephony.TelephonyProperties;
 import com.android.settings.bluetooth.BluetoothEnabler;
 import com.android.settings.wifi.WifiEnabler;
+import com.android.settings.wimax.WimaxEnabler;
 
 public class WirelessSettings extends PreferenceActivity {
 
     private static final String KEY_TOGGLE_AIRPLANE = "toggle_airplane";
     private static final String KEY_TOGGLE_BLUETOOTH = "toggle_bluetooth";
     private static final String KEY_TOGGLE_WIFI = "toggle_wifi";
+    private static final String KEY_TOGGLE_WIMAX = "toggle_wimax";
     private static final String KEY_WIFI_SETTINGS = "wifi_settings";
     private static final String KEY_BT_SETTINGS = "bt_settings";
     private static final String KEY_VPN_SETTINGS = "vpn_settings";
     private static final String KEY_TETHER_SETTINGS = "tether_settings";
     private static final String KEY_PROXY_SETTING = "proxy_setting";
+    private static final String KEY_WIMAX_SETTINGS = "wimax_settings";
     public static final String EXIT_ECM_RESULT = "exit_ecm_result";
     public static final int REQUEST_CODE_EXIT_ECM = 1;
 
@@ -53,6 +57,7 @@ public class WirelessSettings extends PreferenceActivity {
     private CheckBoxPreference mAirplaneModePreference;
     private WifiEnabler mWifiEnabler;
     private BluetoothEnabler mBtEnabler;
+    private WimaxEnabler mWimaxEnabler;
 
     /**
      * Invoked on each preference click in this hierarchy, overrides
@@ -91,12 +96,14 @@ public class WirelessSettings extends PreferenceActivity {
 
         CheckBoxPreference airplane = (CheckBoxPreference) findPreference(KEY_TOGGLE_AIRPLANE);
         CheckBoxPreference wifi = (CheckBoxPreference) findPreference(KEY_TOGGLE_WIFI);
+        CheckBoxPreference wimax = (CheckBoxPreference) findPreference(KEY_TOGGLE_WIMAX);
         CheckBoxPreference bt = (CheckBoxPreference) findPreference(KEY_TOGGLE_BLUETOOTH);
 
         mAirplaneModeEnabler = new AirplaneModeEnabler(this, airplane);
         mAirplaneModePreference = (CheckBoxPreference) findPreference(KEY_TOGGLE_AIRPLANE);
         mWifiEnabler = new WifiEnabler(this, wifi);
         mBtEnabler = new BluetoothEnabler(this, bt);
+        mWimaxEnabler = new WimaxEnabler(this, (WimaxManager) getSystemService(WIMAX_SERVICE), wimax);
 
         String toggleable = Settings.System.getString(getContentResolver(),
                 Settings.System.AIRPLANE_MODE_TOGGLEABLE_RADIOS);
@@ -150,6 +157,7 @@ public class WirelessSettings extends PreferenceActivity {
         mAirplaneModeEnabler.resume();
         mWifiEnabler.resume();
         mBtEnabler.resume();
+        mWimaxEnabler.resume();
     }
     
     @Override
@@ -159,6 +167,7 @@ public class WirelessSettings extends PreferenceActivity {
         mAirplaneModeEnabler.pause();
         mWifiEnabler.pause();
         mBtEnabler.pause();
+        mWimaxEnabler.pause();
     }
     
     @Override
